@@ -1,0 +1,239 @@
+﻿version:  3.9
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: app
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+
+  feature-flags-api:
+    build: ./feature-flags/app/api
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./feature-flags/app/api:/app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/featureflags
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '8001:8000'
+  feature-flags-web:
+    build: ./feature-flags/web
+    volumes:
+      - ./feature-flags/web:/app
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8001
+    ports:
+      - '3001:3000'
+
+  chatops-api:
+    build: ./chatops/app/api
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./chatops/app/api:/app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/chatops
+      REDIS_URL: redis://redis:6379/1
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '8002:8000'
+  chatops-web:
+    build: ./chatops/web
+    volumes:
+      - ./chatops/web:/app
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8002
+    ports:
+      - '3002:3000'
+
+  ledger-api:
+    build: ./ledger/app/api
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./ledger/app/api:/app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/ledger
+      REDIS_URL: redis://redis:6379/2
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '8003:8000'
+  ledger-web:
+    build: ./ledger/web
+    volumes:
+      - ./ledger/web:/app
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8003
+    ports:
+      - '3003:3000'
+
+  rpa-api:
+    build: ./rpa/app/api
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./rpa/app/api:/app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/rpa
+      REDIS_URL: redis://redis:6379/3
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '8004:8000'
+  rpa-web:
+    build: ./rpa/web
+    volumes:
+      - ./rpa/web:/app
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8004
+    ports:
+      - '3004:3000'
+
+  ipaas-api:
+    build: ./ipaas/app/api
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./ipaas/app/api:/app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/ipaas
+      REDIS_URL: redis://redis:6379/4
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '8005:8000'
+  ipaas-web:
+    build: ./ipaas/web
+    volumes:
+      - ./ipaas/web:/app
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8005
+    ports:
+      - '3005:3000'
+
+  workflows-api:
+    build: ./workflows/app/api
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./workflows/app/api:/app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/workflows
+      REDIS_URL: redis://redis:6379/5
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '8006:8000'
+  workflows-web:
+    build: ./workflows/web
+    volumes:
+      - ./workflows/web:/app
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8006
+    ports:
+      - '3006:3000'
+
+  dataops-api:
+    build: ./dataops/app/api
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./dataops/app/api:/app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/dataops
+      REDIS_URL: redis://redis:6379/6
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '8007:8000'
+  dataops-web:
+    build: ./dataops/web
+    volumes:
+      - ./dataops/web:/app
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8007
+    ports:
+      - '3007:3000'
+
+  cmdb-api:
+    build: ./cmdb/app/api
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./cmdb/app/api:/app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/cmdb
+      REDIS_URL: redis://redis:6379/7
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '8008:8000'
+  cmdb-web:
+    build: ./cmdb/web
+    volumes:
+      - ./cmdb/web:/app
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8008
+    ports:
+      - '3008:3000'
+
+  capacity-api:
+    build: ./capacity/app/api
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./capacity/app/api:/app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/capacity
+      REDIS_URL: redis://redis:6379/8
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '8009:8000'
+  capacity-web:
+    build: ./capacity/web
+    volumes:
+      - ./capacity/web:/app
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8009
+    ports:
+      - '3009:3000'
+
+  feature-store-api:
+    build: ./feature-store/app/api
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./feature-store/app/api:/app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/featurestore
+      REDIS_URL: redis://redis:6379/9
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - '8010:8000'
+  feature-store-web:
+    build: ./feature-store/web
+    volumes:
+      - ./feature-store/web:/app
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8010
+    ports:
+      - '3010:3000'
+
+volumes:
+  pgdata:
